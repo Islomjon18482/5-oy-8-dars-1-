@@ -1,7 +1,29 @@
 const inp = document.querySelector(".inp__btn input")
 const btn = document.querySelector(".inp__btn button")
-const block = document.querySelector(".block")
+const block = document.querySelector(".card")
 const error = document.querySelector(".error")
+const day = document.querySelector(".day")
+const time = document.querySelector(".time")
+
+
+    const d = new Date();
+    let day1 = d.getDate();
+    let monthNum = d.getMonth()
+    const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    let name = month[d.getMonth()];
+    let year = d.getFullYear();
+    day.innerHTML = `${day1}-${month[monthNum]} ${year}-year`
+    
+    let hour = d.getHours();
+    let minutes = d.getMinutes();
+    let seconds = d.getSeconds();
+
+
+    
+
+    time.innerHTML = `${hour}:${minutes}:${seconds}`
+
+
 
 function validate(){
     if(!inp.value){
@@ -28,19 +50,22 @@ function creat(item){
 </div>`
 }
 
-btn.addEventListener("click", function(){
-    if(validate()){
-        let card = ''
+async function getData() {
         const api = `https://api.openweathermap.org/data/2.5/weather?q=${inp.value}&appid=56ff80ac3a0c0f5f2e37a0de8ad98800`
-        fetch(api, {
-            method: "GET"
-        })
-        .then((data) =>{
-            return data.json()
-        })
-        .then(data1 =>{
-            card = creat(data1)
-            block.innerHTML += card  
+        let data = (await fetch(api)).json()
+        return data
+}
+
+
+btn.addEventListener("click", async function(){
+    if(validate()){
+        (getData()
+        .then((data)=> {
+            return data
+        }))
+        .then((data)=>{
+            let card = creat(data)
+            block.innerHTML = card
         })
         .catch(()=>{
             error.style.display = "block"
